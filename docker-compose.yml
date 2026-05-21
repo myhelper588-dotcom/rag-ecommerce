@@ -1,0 +1,11 @@
+services:
+  rag-app:
+    build: .
+    container_name: rag-ecommerce
+    volumes:
+      - ./app:/app/app
+      - ./data:/app/data
+    env_file:
+      - .env
+    stdin_open: true
+    tty: true
