@@ -8,3 +8,5 @@ chromadb
 pypdf
 python-dotenv
 sentence-transformers
+langgraph
+langchain-core

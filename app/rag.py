@@ -61,12 +61,12 @@ def ask_question(vectorstore, question: str, source_filter: str = None):
     if source_filter:
         docs = vectorstore.similarity_search(
             question,
-            k=3,
+            k=5,
             filter={"source_file": source_filter}
         )
         print(f"🔍 Recherche dans : {source_filter}")
     else:
-        docs = vectorstore.similarity_search(question, k=3)
+        docs = vectorstore.similarity_search(question, k=5)
         print(f"🔍 Recherche dans tous les documents")
 
     if not docs:
