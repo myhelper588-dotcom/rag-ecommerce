@@ -10,3 +10,5 @@ python-dotenv
 sentence-transformers
 langgraph
 langchain-core
+fastapi
+uvicorn

@@ -17,4 +17,4 @@ COPY . .
 ENV PYTHONUNBUFFERED=1
 
 # Commande de démarrage
-CMD ["python", "app/main.py"]
+CMD ["uvicorn", "app.main_api:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--app-dir", "/app"]
