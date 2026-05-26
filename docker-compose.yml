@@ -5,6 +5,7 @@ services:
     volumes:
       - ./app:/app/app
       - ./data:/app/data
+      - ./scripts:/app/scripts
     env_file:
       - .env
     ports:

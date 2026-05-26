@@ -6,12 +6,14 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 from tools.rag_tool import rag_search, init_vectorstore
 from tools.calculator_tool import calculate
+from tools.shopify_tool import shopify_get_products, shopify_get_orders
+from tools.database_tool import query_database
 
 # ============================================================
 # CONFIGURATION LLM
 # ============================================================
 llm = ChatAnthropic(model="claude-opus-4-5")
-tools = [rag_search, calculate]
+tools = [rag_search, calculate, shopify_get_products, shopify_get_orders, query_database]
 llm_with_tools = llm.bind_tools(tools)
 
 # ============================================================
@@ -20,18 +22,21 @@ llm_with_tools = llm.bind_tools(tools)
 SYSTEM_PROMPT = """Tu es un assistant expert eCommerce.
 Tu as accès à des outils — utilise-les systématiquement :
 
-- rag_search : pour toute question sur des documents internes,
-  politiques, procédures, cahiers des charges, spécifications
+- rag_search : documents internes, politiques, procédures
+- calculate : tout calcul financier, marge, pourcentage, perte
+- shopify_get_products : catalogue, stock, prix, variantes
+- shopify_get_orders : commandes, CA, statuts, historique
+- query_database : analytics, retours, CA, KPIs, historique commandes
+  Schéma : products, orders, order_items, returns, analytics
+  Règle : toujours anonymiser — utilise customer_id pas customer_name
 
-- calculate : pour tout ce qui implique un chiffre, un calcul,
-  une marge, un coût, un prix, un pourcentage, une perte,
-  un ROI, une multiplication ou une addition
-
-Règles importantes :
+Règles :
 - Toujours utiliser un outil plutôt que ta mémoire
-- Si tu doutes entre répondre et utiliser un outil → utilise l'outil
+- Pour les questions chiffrées → combine shopify + calculate
 - Réponds toujours en français
-- Sois concis et structuré dans tes réponses"""
+- Maximum 20 résultats par requête Shopify"""
+
+
 
 # ============================================================
 # ÉTAT DE L'AGENT
