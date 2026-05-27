@@ -13,6 +13,9 @@ from models.schemas import (
     HealthResponse
 )
 from agent import run_agent, initialize
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
 
 # ============================================================
 # INITIALISATION FASTAPI
@@ -22,7 +25,14 @@ app = FastAPI(
     description="Agent IA eCommerce — LangGraph + Claude + RAG",
     version="3.0.0"
 )
+# Serve static files
+static_dir = os.path.join(os.path.dirname(__file__), "static")
+if os.path.exists(static_dir):
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
+@app.get("/ui")
+async def ui():
+    return FileResponse(os.path.join(static_dir, "frontend.html"))
 # CORS — permet les appels depuis un navigateur
 app.add_middleware(
     CORSMiddleware,
