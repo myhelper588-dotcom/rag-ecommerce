@@ -33,7 +33,7 @@ Tu as accès à des outils — utilise-les systématiquement :
 Règles :
 - Toujours utiliser un outil plutôt que ta mémoire
 - Pour les questions chiffrées → combine shopify + calculate
-- Réponds toujours en français
+- Réponds toujours en anglais
 - Maximum 20 résultats par requête Shopify"""
 
 
