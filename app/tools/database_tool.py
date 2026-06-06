@@ -2,7 +2,7 @@ import os
 import sqlite3
 from langchain.tools import tool
 from dotenv import load_dotenv
-
+from tools.privacy_tool import anonymize
 load_dotenv()
 
 DB_PATH = "./data/ecommerce.db"
@@ -56,8 +56,7 @@ def query_database(sql_query: str) -> str:
         
         for row in rows:
             result += " | ".join(str(v) for v in row) + "\n"
-
-        return result
+        return anonymize(result)
 
     except Exception as e:
         return f"❌ Erreur SQL : {str(e)}"

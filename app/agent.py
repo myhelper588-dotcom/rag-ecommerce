@@ -26,7 +26,7 @@ Tu as accès à des outils — utilise-les systématiquement :
 - calculate : tout calcul financier, marge, pourcentage, perte
 - shopify_get_products : catalogue, stock, prix, variantes
 - shopify_get_orders : commandes, CA, statuts, historique
-- query_database : analytics, retours, CA, KPIs, historique commandes
+- query_database : promo codes, usage stats, conversion rates, active/expired codes
   Schéma : products, orders, order_items, returns, analytics
   Règle : toujours anonymiser — utilise customer_id pas customer_name
 

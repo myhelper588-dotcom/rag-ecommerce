@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RAG eCommerce — Agent IA</title>
+<title>RAG eCommerce — AI Agent</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -21,9 +21,7 @@
     --mono: 'DM Mono', monospace;
     --serif: 'Fraunces', serif;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   body {
     background: var(--bg);
     color: var(--text);
@@ -33,21 +31,17 @@
     flex-direction: column;
     overflow: hidden;
   }
-
-  /* Animated background */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
-    background: 
+    background:
       radial-gradient(ellipse at 20% 50%, rgba(108,99,255,0.08) 0%, transparent 60%),
       radial-gradient(ellipse at 80% 20%, rgba(67,233,123,0.05) 0%, transparent 50%),
       radial-gradient(ellipse at 60% 80%, rgba(255,107,107,0.05) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
-
-  /* HEADER */
   header {
     position: relative;
     z-index: 10;
@@ -60,396 +54,130 @@
     backdrop-filter: blur(20px);
     flex-shrink: 0;
   }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
+  .logo { display: flex; align-items: center; gap: 12px; }
   .logo-icon {
-    width: 36px;
-    height: 36px;
+    width: 36px; height: 36px;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-size: 18px;
   }
-
-  .logo-text {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .logo-title {
-    font-family: var(--serif);
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-    color: var(--text);
-  }
-
-  .logo-subtitle {
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-  }
-
-  .status-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: var(--text-muted);
-  }
-
+  .logo-text { display: flex; flex-direction: column; }
+  .logo-title { font-family: var(--serif); font-size: 17px; font-weight: 600; letter-spacing: -0.3px; }
+  .logo-subtitle { font-size: 10px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+  .status-bar { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); }
   .status-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
     background: var(--accent3);
     box-shadow: 0 0 8px var(--accent3);
     animation: pulse 2s ease-in-out infinite;
   }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(0.85); }
-  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(.85)} }
 
   /* TOOLS BAR */
   .tools-bar {
-    position: relative;
-    z-index: 10;
+    position: relative; z-index: 10;
     padding: 10px 28px;
     border-bottom: 1px solid var(--border);
-    display: flex;
-    gap: 8px;
+    display: flex; gap: 12px; align-items: flex-start;
     background: rgba(10,10,15,0.6);
-    flex-shrink: 0;
-    flex-wrap: wrap;
+    flex-shrink: 0; flex-wrap: wrap;
   }
-
+  .tools-label { font-size: 10px; color: var(--text-muted); align-self: center; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; }
+  .tool-item { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
   .tool-chip {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 10px;
-    letter-spacing: 0.5px;
-    border: 1px solid;
-    cursor: pointer;
-    transition: all 0.2s;
+    padding: 4px 10px; border-radius: 20px; font-size: 10px;
+    letter-spacing: 0.5px; border: 1px solid; cursor: default;
     text-transform: uppercase;
   }
-
+  .tool-hint { font-size: 9px; color: var(--text-muted); padding-left: 4px; letter-spacing: 0.3px; }
   .tool-rag { border-color: var(--accent); color: var(--accent); }
-  .tool-rag:hover { background: rgba(108,99,255,0.15); }
   .tool-shopify { border-color: var(--accent3); color: var(--accent3); }
-  .tool-shopify:hover { background: rgba(67,233,123,0.15); }
   .tool-db { border-color: #f093fb; color: #f093fb; }
-  .tool-db:hover { background: rgba(240,147,251,0.15); }
   .tool-calc { border-color: var(--accent2); color: var(--accent2); }
-  .tool-calc:hover { background: rgba(255,107,107,0.15); }
 
   /* MESSAGES */
   .messages {
-    position: relative;
-    z-index: 5;
-    flex: 1;
-    overflow-y: auto;
+    position: relative; z-index: 5;
+    flex: 1; overflow-y: auto;
     padding: 24px 28px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    display: flex; flex-direction: column; gap: 16px;
     scroll-behavior: smooth;
   }
-
   .messages::-webkit-scrollbar { width: 4px; }
   .messages::-webkit-scrollbar-track { background: transparent; }
   .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-  /* WELCOME */
-  .welcome {
-    text-align: center;
-    padding: 40px 20px;
-    animation: fadeIn 0.6s ease;
-  }
-
-  .welcome h1 {
-    font-family: var(--serif);
-    font-size: 36px;
-    font-weight: 300;
-    font-style: italic;
-    color: var(--text);
-    margin-bottom: 8px;
-    letter-spacing: -1px;
-  }
-
+  .welcome { text-align: center; padding: 40px 20px; animation: fadeIn 0.6s ease; }
+  .welcome h1 { font-family: var(--serif); font-size: 36px; font-weight: 300; font-style: italic; margin-bottom: 8px; letter-spacing: -1px; }
   .welcome h1 span { color: var(--accent); font-style: normal; font-weight: 600; }
+  .welcome p { font-size: 12px; color: var(--text-muted); margin-bottom: 32px; letter-spacing: 0.5px; }
 
-  .welcome p {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 32px;
-    letter-spacing: 0.5px;
-  }
-
-  .suggestions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
+  .suggestions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 620px; margin: 0 auto; }
   .suggestion {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.2s;
-    font-family: var(--mono);
-    color: var(--text);
-    font-size: 11px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px;
+    cursor: pointer; text-align: left;
+    transition: all 0.2s; font-family: var(--mono);
+    color: var(--text); font-size: 11px;
   }
-
-  .suggestion:hover {
-    border-color: var(--accent);
-    background: var(--surface2);
-    transform: translateY(-1px);
-  }
-
+  .suggestion:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-1px); }
   .suggestion-icon { font-size: 16px; margin-bottom: 6px; display: block; }
   .suggestion-text { color: var(--text-muted); font-size: 10px; margin-top: 4px; }
 
-  /* MESSAGES */
-  .message {
-    display: flex;
-    gap: 12px;
-    animation: slideIn 0.3s ease;
-    max-width: 100%;
-  }
-
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
+  .message { display: flex; gap: 12px; animation: slideIn 0.3s ease; max-width: 100%; }
+  @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
   .message.user { flex-direction: row-reverse; }
-
-  .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
-
-  .avatar-user {
-    background: linear-gradient(135deg, var(--accent), #a78bfa);
-  }
-
-  .avatar-bot {
-    background: linear-gradient(135deg, var(--surface2), var(--border));
-    border: 1px solid var(--border);
-  }
-
-  .bubble {
-    max-width: 72%;
-    padding: 14px 18px;
-    border-radius: 16px;
-    font-size: 13px;
-    line-height: 1.7;
-  }
-
-  .bubble-user {
-    background: var(--user-bg);
-    border: 1px solid var(--border);
-    border-top-right-radius: 4px;
-    color: var(--text);
-  }
-
-  .bubble-bot {
-    background: var(--bot-bg);
-    border: 1px solid var(--border);
-    border-top-left-radius: 4px;
-    color: var(--text);
-  }
-
-  .bubble-meta {
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 6px;
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-
-  .meta-tag {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  .meta-tag span {
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 9px;
-    letter-spacing: 0.3px;
-  }
-
+  .avatar { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+  .avatar-user { background: linear-gradient(135deg, var(--accent), #a78bfa); }
+  .avatar-bot { background: linear-gradient(135deg, var(--surface2), var(--border)); border: 1px solid var(--border); }
+  .bubble { max-width: 72%; padding: 14px 18px; border-radius: 16px; font-size: 13px; line-height: 1.7; }
+  .bubble-user { background: var(--user-bg); border: 1px solid var(--border); border-top-right-radius: 4px; }
+  .bubble-bot { background: var(--bot-bg); border: 1px solid var(--border); border-top-left-radius: 4px; }
+  .bubble-meta { font-size: 10px; color: var(--text-muted); margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .meta-tag span { padding: 1px 6px; border-radius: 4px; font-size: 9px; letter-spacing: 0.3px; }
   .tag-rag { background: rgba(108,99,255,0.2); color: var(--accent); }
   .tag-shopify { background: rgba(67,233,123,0.2); color: var(--accent3); }
   .tag-db { background: rgba(240,147,251,0.2); color: #f093fb; }
   .tag-calc { background: rgba(255,107,107,0.2); color: var(--accent2); }
 
-  /* TYPING */
-  .typing {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 14px 18px;
-    background: var(--bot-bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    border-top-left-radius: 4px;
-    width: fit-content;
-  }
+  .typing { display: flex; align-items: center; gap: 5px; padding: 14px 18px; background: var(--bot-bg); border: 1px solid var(--border); border-radius: 16px; border-top-left-radius: 4px; width: fit-content; }
+  .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); animation: typing 1.2s ease-in-out infinite; }
+  .typing-dot:nth-child(2){animation-delay:.2s} .typing-dot:nth-child(3){animation-delay:.4s}
+  @keyframes typing { 0%,100%{transform:translateY(0);opacity:.4} 50%{transform:translateY(-4px);opacity:1} }
 
-  .typing-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--text-muted);
-    animation: typing 1.2s ease-in-out infinite;
-  }
+  .error-bubble { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); color: var(--accent2); padding: 12px 16px; border-radius: 12px; font-size: 12px; }
 
-  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-  @keyframes typing {
-    0%, 100% { transform: translateY(0); opacity: 0.4; }
-    50% { transform: translateY(-4px); opacity: 1; }
-  }
-
-  /* ERROR */
-  .error-bubble {
-    background: rgba(255,107,107,0.1);
-    border: 1px solid rgba(255,107,107,0.3);
-    color: var(--accent2);
-    padding: 12px 16px;
-    border-radius: 12px;
-    font-size: 12px;
-  }
-
-  /* INPUT AREA */
+  /* INPUT */
   .input-area {
-    position: relative;
-    z-index: 10;
+    position: relative; z-index: 10;
     padding: 16px 28px 20px;
     border-top: 1px solid var(--border);
     background: rgba(10,10,15,0.8);
     backdrop-filter: blur(20px);
     flex-shrink: 0;
   }
-
   .input-wrapper {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 12px 16px;
-    transition: border-color 0.2s;
+    display: flex; gap: 10px; align-items: flex-end;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 12px 16px; transition: border-color 0.2s;
   }
-
-  .input-wrapper:focus-within {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
-  }
-
-  #question {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 13px;
-    resize: none;
-    max-height: 120px;
-    min-height: 20px;
-    line-height: 1.6;
-  }
-
+  .input-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,0.1); }
+  #question { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: var(--mono); font-size: 13px; resize: none; max-height: 120px; min-height: 20px; line-height: 1.6; }
   #question::placeholder { color: var(--text-muted); }
-
-  .send-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: var(--accent);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    flex-shrink: 0;
-    color: white;
-    font-size: 16px;
-  }
-
+  .send-btn { width: 36px; height: 36px; border-radius: 10px; background: var(--accent); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0; color: white; font-size: 16px; }
   .send-btn:hover { background: #7c75ff; transform: scale(1.05); }
   .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-  .input-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 8px;
-    padding: 0 4px;
-  }
-
-  .input-hint {
-    font-size: 10px;
-    color: var(--text-muted);
-    letter-spacing: 0.3px;
-  }
-
-  .filter-select {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-family: var(--mono);
-    font-size: 10px;
-    padding: 4px 8px;
-    border-radius: 8px;
-    outline: none;
-    cursor: pointer;
-  }
-
+  .input-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding: 0 4px; }
+  .input-hint { font-size: 10px; color: var(--text-muted); letter-spacing: 0.3px; }
+  .filter-select { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); font-family: var(--mono); font-size: 10px; padding: 4px 8px; border-radius: 8px; outline: none; cursor: pointer; }
   .filter-select:focus { border-color: var(--accent); color: var(--text); }
 
-  /* RESPONSIVE */
-  @media (max-width: 600px) {
-    header, .tools-bar, .messages, .input-area { padding-left: 16px; padding-right: 16px; }
-    .suggestions { grid-template-columns: 1fr; }
-    .bubble { max-width: 88%; }
+  @media(max-width:600px){
+    header,.tools-bar,.messages,.input-area{padding-left:16px;padding-right:16px}
+    .suggestions{grid-template-columns:1fr}
+    .bubble{max-width:88%}
   }
 </style>
 </head>
@@ -460,49 +188,65 @@
     <div class="logo-icon">🛒</div>
     <div class="logo-text">
       <span class="logo-title">RAG eCommerce</span>
-      <span class="logo-subtitle">Agent IA Multi-sources</span>
+      <span class="logo-subtitle">Multi-source AI Agent</span>
     </div>
   </div>
   <div class="status-bar">
     <div class="status-dot"></div>
-    <span>API connectée</span>
-    <span style="color: var(--border)">|</span>
-    <span id="api-url" style="font-size:10px; opacity:0.6"></span>
+    <span>API connected</span>
+    <span style="color:var(--border)">|</span>
+    <span id="api-url" style="font-size:10px;opacity:0.6"></span>
   </div>
 </header>
 
 <div class="tools-bar">
-  <span style="font-size:10px; color:var(--text-muted); align-self:center; text-transform:uppercase; letter-spacing:1px;">Outils actifs :</span>
-  <div class="tool-chip tool-rag">📄 RAG Documents</div>
-  <div class="tool-chip tool-shopify">🛒 Shopify API</div>
-  <div class="tool-chip tool-db">🗄️ Base de données</div>
-  <div class="tool-chip tool-calc">🧮 Calculator</div>
+  <span class="tools-label">Active tools:</span>
+
+  <div class="tool-item">
+    <div class="tool-chip tool-rag">📄 RAG Documents</div>
+    <span class="tool-hint">Access to S3 documents</span>
+  </div>
+
+  <div class="tool-item">
+    <div class="tool-chip tool-shopify">🛒 Shopify API</div>
+    <span class="tool-hint">Live API access</span>
+  </div>
+
+  <div class="tool-item">
+    <div class="tool-chip tool-db">🎟️ Promo Codes DB</div>
+    <span class="tool-hint">Access to promo codes</span>
+  </div>
+
+  <div class="tool-item">
+    <div class="tool-chip tool-calc">🧮 Calculator</div>
+    <span class="tool-hint">Financial calculations</span>
+  </div>
 </div>
 
 <div class="messages" id="messages">
   <div class="welcome" id="welcome">
-    <h1>Bonjour, je suis votre<br><span>Agent eCommerce</span></h1>
-    <p>Posez-moi n'importe quelle question sur vos données</p>
+    <h1>Hello, I'm your<br><span>eCommerce Agent</span></h1>
+    <p>Ask me anything about your store data</p>
     <div class="suggestions">
       <button class="suggestion" onclick="askSuggestion(this)">
-        <span class="suggestion-icon">📊</span>
-        Quels sont les 5 produits les plus retournés ce mois ?
-        <div class="suggestion-text">Analytics · Base de données</div>
+        <span class="suggestion-icon">🎟️</span>
+        Which promo codes are most used this month?
+        <div class="suggestion-text">Promo DB · Analytics</div>
       </button>
       <button class="suggestion" onclick="askSuggestion(this)">
         <span class="suggestion-icon">🛒</span>
-        Montre-moi les produits disponibles dans mon store
-        <div class="suggestion-text">Shopify API · Catalogue</div>
+        Show me available products in my store
+        <div class="suggestion-text">Shopify API · Catalog</div>
       </button>
       <button class="suggestion" onclick="askSuggestion(this)">
         <span class="suggestion-icon">💰</span>
-        Calcule la marge d'un produit à 89€ avec un coût de 45€
-        <div class="suggestion-text">Calculator · Finances</div>
+        Calculate margin for a product at 89€ with 45€ cost
+        <div class="suggestion-text">Calculator · Finance</div>
       </button>
       <button class="suggestion" onclick="askSuggestion(this)">
         <span class="suggestion-icon">📄</span>
-        Quelle est la politique de retour dans les documents ?
-        <div class="suggestion-text">RAG · Documents internes</div>
+        What is the return policy in our documents?
+        <div class="suggestion-text">RAG · S3 Documents</div>
       </button>
     </div>
   </div>
@@ -510,44 +254,36 @@
 
 <div class="input-area">
   <div class="input-wrapper">
-    <textarea id="question" placeholder="Posez votre question à l'agent..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-    <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Envoyer">➤</button>
+    <textarea id="question" placeholder="Ask your question to the agent..." rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Send">➤</button>
   </div>
   <div class="input-footer">
-    <span class="input-hint">Entrée pour envoyer · Maj+Entrée pour nouvelle ligne</span>
+    <span class="input-hint">Enter to send · Shift+Enter for new line</span>
     <select class="filter-select" id="source-filter">
-      <option value="">Tous les documents</option>
+      <option value="">All documents</option>
     </select>
   </div>
 </div>
 
 <script>
-  // Configuration API
   const API_URL = window.location.origin;
   document.getElementById('api-url').textContent = API_URL;
 
-  // Auto-resize textarea
   function autoResize(el) {
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 120) + 'px';
   }
 
-  // Keyboard handler
   function handleKey(e) {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   }
 
-  // Click suggestion
   function askSuggestion(btn) {
     const text = btn.querySelector('.suggestion-icon').nextSibling.textContent.trim();
     document.getElementById('question').value = text;
     sendMessage();
   }
 
-  // Tag color mapping
   function getTagClass(source) {
     if (source.includes('rag')) return 'tag-rag';
     if (source.includes('shopify')) return 'tag-shopify';
@@ -561,13 +297,12 @@
       'rag_search': '📄 RAG',
       'shopify_get_products': '🛒 Shopify',
       'shopify_get_orders': '🛒 Shopify Orders',
-      'query_database': '🗄️ Database',
+      'query_database': '🎟️ Promo DB',
       'calculate': '🧮 Calculator',
     };
     return map[source] || source;
   }
 
-  // Format response text
   function formatText(text) {
     return text
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -576,7 +311,6 @@
       .replace(/\n/g, '<br>');
   }
 
-  // Add message to chat
   function addMessage(content, isUser = false, meta = null) {
     const welcome = document.getElementById('welcome');
     if (welcome) welcome.remove();
@@ -596,7 +330,6 @@
     if (meta && !isUser) {
       const metaDiv = document.createElement('div');
       metaDiv.className = 'bubble-meta';
-
       if (meta.sources_used && meta.sources_used.length > 0) {
         meta.sources_used.forEach(s => {
           const tag = document.createElement('div');
@@ -605,7 +338,6 @@
           metaDiv.appendChild(tag);
         });
       }
-
       if (meta.execution_time) {
         const time = document.createElement('span');
         time.style.color = 'var(--text-muted)';
@@ -613,7 +345,6 @@
         time.textContent = `⏱ ${meta.execution_time}s`;
         metaDiv.appendChild(time);
       }
-
       bubble.appendChild(metaDiv);
     }
 
@@ -621,26 +352,18 @@
     div.appendChild(bubble);
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
-    return div;
   }
 
-  // Add typing indicator
   function addTyping() {
     const messages = document.getElementById('messages');
     const div = document.createElement('div');
-    div.className = 'message';
-    div.id = 'typing-indicator';
-
+    div.className = 'message'; div.id = 'typing-indicator';
     const avatar = document.createElement('div');
-    avatar.className = 'avatar avatar-bot';
-    avatar.textContent = '🤖';
-
+    avatar.className = 'avatar avatar-bot'; avatar.textContent = '🤖';
     const typing = document.createElement('div');
     typing.className = 'typing';
     typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-
-    div.appendChild(avatar);
-    div.appendChild(typing);
+    div.appendChild(avatar); div.appendChild(typing);
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
   }
@@ -650,7 +373,6 @@
     if (t) t.remove();
   }
 
-  // Send message
   async function sendMessage() {
     const input = document.getElementById('question');
     const question = input.value.trim();
@@ -659,13 +381,10 @@
     const btn = document.getElementById('send-btn');
     const sourceFilter = document.getElementById('source-filter').value || null;
 
-    // Add user message
     addMessage(question, true);
     input.value = '';
     input.style.height = 'auto';
     btn.disabled = true;
-
-    // Show typing
     addTyping();
 
     try {
@@ -674,27 +393,20 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question, source_filter: sourceFilter })
       });
-
       removeTyping();
-
       if (!response.ok) {
         const err = await response.json();
-        addMessage(`❌ Erreur ${response.status} : ${err.detail || 'Erreur inconnue'}`, false);
+        addMessage(`❌ Error ${response.status}: ${err.detail || 'Unknown error'}`);
         return;
       }
-
       const data = await response.json();
-      addMessage(data.answer, false, {
-        sources_used: data.sources_used,
-        execution_time: data.execution_time
-      });
-
+      addMessage(data.answer, false, { sources_used: data.sources_used, execution_time: data.execution_time });
     } catch (err) {
       removeTyping();
       const messages = document.getElementById('messages');
       const errDiv = document.createElement('div');
       errDiv.className = 'error-bubble';
-      errDiv.textContent = `❌ Impossible de contacter l'API. Vérifiez que le serveur est démarré.`;
+      errDiv.textContent = '❌ Cannot reach the API. Please check that the server is running.';
       messages.appendChild(errDiv);
       messages.scrollTop = messages.scrollHeight;
     } finally {
@@ -703,10 +415,7 @@
     }
   }
 
-  // Focus input on load
-  window.onload = () => {
-    document.getElementById('question').focus();
-  };
+  window.onload = () => document.getElementById('question').focus();
 </script>
 </body>
 </html>

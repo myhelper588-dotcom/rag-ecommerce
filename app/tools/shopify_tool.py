@@ -2,7 +2,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from langchain.tools import tool
-
+from tools.privacy_tool import anonymize
 load_dotenv()
 
 def get_shopify_headers():
@@ -109,7 +109,7 @@ def shopify_get_orders(query: str) -> str:
         for o in orders:
             result += f"• {o['name']} | {o['total_price']}€ | {o['financial_status']} | {o['created_at'][:10]}\n"
 
-        return result
+        return anonymize(result)
 
     except Exception as e:
         return f"❌ Erreur : {str(e)}"
