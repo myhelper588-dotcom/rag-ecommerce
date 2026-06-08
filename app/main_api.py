@@ -40,7 +40,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
-
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "version": "1.0"}
 # Historique en mémoire
 history: list[HistoryItem] = []
 

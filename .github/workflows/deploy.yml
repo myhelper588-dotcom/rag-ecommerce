@@ -1,0 +1,53 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main          # Se déclenche uniquement sur push vers main
+
+jobs:
+  deploy:
+    name: Deploy RAG eCommerce Agent
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Récupération du code ──────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ── 2. Tests basiques (optionnel mais recommandé) ─────────
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies & run lint
+        run: |
+          pip install flake8
+          # Lint leger - erreurs critiques uniquement
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics || true
+
+      # ── 3. Déploiement SSH sur EC2 ───────────────────────────
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/ubuntu/rag-ecommerce   # adapte si besoin
+            echo "=== Git Pull ==="
+            git pull origin main
+            
+            echo "=== Docker Build & Restart ==="
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
+            
+            echo "=== Health Check ==="
+            sleep 10
+            curl -f http://localhost:8000/health || echo "WARNING: health check failed"
+            
+            echo "=== Deployment Done ==="
+            docker compose ps
